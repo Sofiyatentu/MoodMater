@@ -20,7 +20,9 @@ function App() {
     }
 
     const queryParams = new URLSearchParams(params).toString();
-    const url = `/api/moods${queryParams ? `?${queryParams}` : ""}`;
+    const url = `${process.env.REACT_APP_BACKEND_URL}/api/moods${
+      queryParams ? `?${queryParams}` : ""
+    }`;
 
     try {
       const res = await fetch(url, {
@@ -51,14 +53,17 @@ function App() {
       return;
     }
     try {
-      const res = await fetch("/api/moods", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ mood, note }),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/moods`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ mood, note }),
+        }
+      );
       if (res.ok) {
         toast.success("Mood saved!");
         fetchMoods(filterParams);
@@ -78,7 +83,7 @@ function App() {
       return;
     }
     try {
-      await fetch(`/api/moods/${id}`, {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/moods/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

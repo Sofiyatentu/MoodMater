@@ -10,11 +10,14 @@ function EditForm({ id, onUpdate, onClose }) {
     const token = localStorage.getItem("token");
     if (!token) return;
     try {
-      const res = await fetch(`/api/moods/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/moods/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const data = await res.json();
       setMood(data.mood);
       setNote(data.note);
@@ -35,7 +38,7 @@ function EditForm({ id, onUpdate, onClose }) {
     if (!token) return;
 
     try {
-      await fetch(`/api/moods/${id}`, {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/moods/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
