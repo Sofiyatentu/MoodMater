@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
-function EditForm({ moodToEdit, onUpdate, fetchMoods }) {
-  const [mood, setMood] = useState(moodToEdit.mood);
-  const [note, setNote] = useState(moodToEdit.note);
+function EditForm({ moodToEdit = {}, onUpdate, fetchMoods }) {
+  const [mood, setMood] = useState(moodToEdit.mood || "");
+  const [note, setNote] = useState(moodToEdit.note || "");
 
   useEffect(() => {
-    setMood(moodToEdit.mood);
-    setNote(moodToEdit.note);
+    if (moodToEdit) {
+      setMood(moodToEdit.mood || "");
+      setNote(moodToEdit.note || "");
+    }
   }, [moodToEdit]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      if (!token) return;
+      if (!token || !moodToEdit?._id) return;
 
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/moods/${moodToEdit._id}`,
@@ -30,7 +32,7 @@ function EditForm({ moodToEdit, onUpdate, fetchMoods }) {
 
       if (res.ok) {
         toast.success("Mood updated!");
-        onUpdate();
+        onUpdate?.();
       } else {
         toast.error("Failed to update mood.");
       }
