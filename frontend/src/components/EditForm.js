@@ -30,7 +30,7 @@ function EditForm({ id, onUpdate, onClose }) {
 
   useEffect(() => {
     fetchMoods();
-  }, [id]);
+  }, [id, fetchMoods]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

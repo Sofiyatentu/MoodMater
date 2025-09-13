@@ -53,7 +53,7 @@ function Signup() {
         />
         <br />
         <button type="submit">Signup</button>
-        <a onClick={() => navigate("/login")}>
+        <a onClick={() => navigate("/login")} href="/login">
           Already have an account? Login here.
         </a>
       </form>

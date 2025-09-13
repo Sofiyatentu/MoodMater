@@ -44,7 +44,7 @@ function App() {
 
   useEffect(() => {
     fetchMoods(filterParams);
-  }, [filterParams]);
+  }, [filterParams, fetchMoods]);
 
   const handleSaveMood = async ({ mood, note }) => {
     const token = localStorage.getItem("token");

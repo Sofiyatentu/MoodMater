@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useState } from "react";
+
 import EditForm from "./EditForm";
 
 const MoodList = ({ moods, onDelete, onUpdate, onFilter }) => {
