@@ -1,31 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
-function EditForm({ moodToEdit, onUpdate }) {
-  // Correctly define all state variables
+function EditForm({ moodToEdit, onUpdate, onCancel }) {
   const [mood, setMood] = useState("");
   const [note, setNote] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Use useEffect to update state when a mood is selected for editing
-  // The dependency array [moodToEdit] ensures this runs only when the prop changes
   useEffect(() => {
     if (moodToEdit) {
       setMood(moodToEdit.mood || "");
       setNote(moodToEdit.note || "");
     }
-  }, [moodToEdit]); // Correctly add the dependency array
+  }, [moodToEdit]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (!moodToEdit) return;
 
-    try {
-      // Get the token from localStorage or your state management
-      // This is a common method, but adjust if your app handles tokens differently
-      const token = localStorage.getItem("token");
+    setIsSubmitting(true);
 
+    try {
+      const token = localStorage.getItem("token");
       if (!token) {
         toast.error("Authentication token not found.");
+        setIsSubmitting(false);
         return;
       }
 
@@ -41,26 +39,80 @@ function EditForm({ moodToEdit, onUpdate }) {
         }
       );
 
+      const data = await res.json();
+
       if (res.ok) {
-        toast.success("Mood updated!");
-        onUpdate();
+        toast.success("Mood updated successfully!");
+        onUpdate(data);
       } else {
-        toast.error("Failed to update mood.");
+        toast.error(data.message || "Failed to update mood.");
       }
     } catch (error) {
       console.error("Error updating mood:", error);
-      toast.error("Failed to update mood.");
+      toast.error("Failed to update mood. Please check your connection.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (!moodToEdit) return null;
 
   return (
-    <form onSubmit={handleUpdate}>
-      <input value={mood} onChange={(e) => setMood(e.target.value)} required />
-      <input value={note} onChange={(e) => setNote(e.target.value)} />
-      <button type="submit">Update</button>
-    </form>
+    <div className="edit-form-overlay">
+      <div className="edit-form">
+        <h2>Edit Mood Entry</h2>
+        <form onSubmit={handleUpdate}>
+          <div className="form-group">
+            <label htmlFor="mood">Mood:</label>
+            <select
+              id="mood"
+              value={mood}
+              onChange={(e) => setMood(e.target.value)}
+              required
+              disabled={isSubmitting}
+            >
+              <option value="">Select a mood</option>
+              <option value="happy">Happy</option>
+              <option value="sad">Sad</option>
+              <option value="energetic">Energetic</option>
+              <option value="calm">Calm</option>
+              <option value="anxious">Anxious</option>
+              <option value="excited">Excited</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="note">Notes:</label>
+            <textarea
+              id="note"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              disabled={isSubmitting}
+              rows="3"
+              placeholder="Add any notes about your mood..."
+            />
+          </div>
+
+          <div className="form-actions">
+            <button
+              type="button"
+              onClick={onCancel}
+              disabled={isSubmitting}
+              className="cancel-btn"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="update-btn"
+            >
+              {isSubmitting ? "Updating..." : "Update"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
 
