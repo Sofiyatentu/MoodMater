@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
-function EditForm({ moodToEdit = {}, onUpdate, fetchMoods }) {
-  const [mood, setMood] = useState(moodToEdit.mood || "");
-  const [note, setNote] = useState(moodToEdit.note || "");
+function EditForm({ moodToEdit, onUpdate }) {
+  const [mood, setMood] = useState(""); // always start with empty string
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     if (moodToEdit) {
@@ -14,9 +14,11 @@ function EditForm({ moodToEdit = {}, onUpdate, fetchMoods }) {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    if (!moodToEdit) return;
+
     try {
       const token = localStorage.getItem("token");
-      if (!token || !moodToEdit?._id) return;
+      if (!token) return;
 
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/moods/${moodToEdit._id}`,
@@ -32,7 +34,7 @@ function EditForm({ moodToEdit = {}, onUpdate, fetchMoods }) {
 
       if (res.ok) {
         toast.success("Mood updated!");
-        onUpdate?.();
+        onUpdate();
       } else {
         toast.error("Failed to update mood.");
       }
@@ -41,6 +43,8 @@ function EditForm({ moodToEdit = {}, onUpdate, fetchMoods }) {
       toast.error("Failed to update mood.");
     }
   };
+
+  if (!moodToEdit) return null;
 
   return (
     <form onSubmit={handleUpdate}>
