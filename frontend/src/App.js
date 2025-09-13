@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,35 +12,38 @@ function App() {
   const [filterParams, setFilterParams] = useState({});
   const navigate = useNavigate();
 
-  const fetchMoods = async (params = {}) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    const queryParams = new URLSearchParams(params).toString();
-    const url = `${process.env.REACT_APP_BACKEND_URL}/api/moods${
-      queryParams ? `?${queryParams}` : ""
-    }`;
-
-    try {
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.status === 401) {
-        localStorage.removeItem("token");
+  const fetchMoods = useCallback(
+    async (params = {}) => {
+      const token = localStorage.getItem("token");
+      if (!token) {
         navigate("/login");
         return;
       }
-      const data = await res.json();
-      setMoods(data);
-    } catch (error) {
-      console.error("Error fetching moods:", error);
-      toast.error("Failed to fetch moods.");
-    }
-  };
+
+      const queryParams = new URLSearchParams(params).toString();
+      const url = `${process.env.REACT_APP_BACKEND_URL}/api/moods${
+        queryParams ? `?${queryParams}` : ""
+      }`;
+
+      try {
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/login");
+          return;
+        }
+        const data = await res.json();
+        setMoods(data);
+      } catch (error) {
+        console.error("Error fetching moods:", error);
+        toast.error("Failed to fetch moods.");
+      }
+    },
+    [navigate]
+  );
 
   useEffect(() => {
     fetchMoods(filterParams);
