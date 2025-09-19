@@ -1,9 +1,8 @@
 import { useState } from "react";
-
 import EditForm from "./EditForm";
 
 const MoodList = ({ moods, onDelete, onUpdate, onFilter }) => {
-  const [editId, setEditId] = useState(null);
+  const [moodToEdit, setMoodToEdit] = useState(null); // State to hold the mood object
   const [filterMood, setFilterMood] = useState("");
   const [filterNote, setFilterNote] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -27,6 +26,11 @@ const MoodList = ({ moods, onDelete, onUpdate, onFilter }) => {
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
+  };
+
+  // New function to handle edit click
+  const handleEdit = (mood) => {
+    setMoodToEdit(mood);
   };
 
   return (
@@ -94,15 +98,15 @@ const MoodList = ({ moods, onDelete, onUpdate, onFilter }) => {
           <p>{new Date(item.date).toLocaleString()}</p>
           <div className="actions">
             <button onClick={() => handleDelete(item._id)}>Delete</button>
-            <button onClick={() => setEditId(item._id)}>Edit</button>
+            <button onClick={() => handleEdit(item)}>Edit</button>
           </div>
         </div>
       ))}
-      {editId && (
+      {moodToEdit && (
         <EditForm
-          id={editId}
+          moodToEdit={moodToEdit} // Pass the mood object to the EditForm
           onUpdate={onUpdate}
-          onClose={() => setEditId(null)}
+          onClose={() => setMoodToEdit(null)}
         />
       )}
     </div>
