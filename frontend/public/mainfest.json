@@ -1,0 +1,8 @@
+{
+  "short_name": "MoodMater",
+  "name": "Mood Mater App",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

@@ -12,7 +12,9 @@ const port = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "https://gleeful-cobbler-22c901.netlify.app", // your Netlify frontend
+    origin: [
+      "https://mood-mater-6jp2wlw9e-sofiyas-projects-240269d1.vercel.app",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
