@@ -12,9 +12,7 @@ const port = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: [
-      "https://mood-mater-6jp2wlw9e-sofiyas-projects-240269d1.vercel.app",
-    ],
+    origin: ["https://mood-mater.vercel.app/", "http://localhost:3000"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
